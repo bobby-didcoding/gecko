@@ -1,0 +1,3 @@
+SECRET_KEY="demo-secret-123"
+DEBUG=True
+DATABASE_URL=postgres://dev:dev@postgres:5432/app

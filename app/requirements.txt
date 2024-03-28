@@ -1,0 +1,16 @@
+
+black
+celery
+Django==5.0
+django-celery-beat
+django-celery-results
+django-environ
+django-enumfield
+django-extensions
+django-redis
+flake8
+flower
+psycopg2-binary
+redis
+requests
+

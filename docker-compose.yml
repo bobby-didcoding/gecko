@@ -1,0 +1,124 @@
+version: '3.7'
+services:
+
+
+  postgres:
+    image: postgres:14
+    networks:
+      - inside-network
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
+    volumes:
+      - pg:/var/lib/postgresql/data
+      - ./docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+  
+  redis:
+    image: redis:6-alpine
+    networks:
+      - inside-network
+    ports:
+      - "6379:6379"
+    container_name: redis
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: app
+    networks:
+      - inside-network
+    command: >
+      bash -c "dockerize -wait tcp://postgres:5432
+      && python manage.py makemigrations
+      && python manage.py migrate
+      && python manage.py collectstatic --no-input
+      && python manage.py runserver 0.0.0.0:8000
+      && python manage.py test
+      && python manage.py runscript config"
+    volumes:
+      - ./app:/app
+    ports:
+      - 8000:8000
+    env_file:
+      - ./app/.env
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    restart: always
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: worker
+    networks:
+      - inside-network
+    command: >
+      bash -c "dockerize -wait tcp://postgres:5432
+      && python manage.py makemigrations
+      && python manage.py migrate
+      && celery -A demo worker --loglevel=info --logfile=logs/celery.log"
+    volumes:
+      - ./app:/code
+    env_file:
+      - ./app/.env
+    depends_on:
+      - postgres
+      - redis
+      - app
+
+  beat:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: beat
+    networks:
+      - inside-network
+    command: >
+      bash -c "dockerize -wait tcp://postgres:5432
+      && python manage.py makemigrations
+      && python manage.py migrate
+      && celery -A demo beat -l info"
+    volumes:
+      - ./app:/code
+    env_file:
+      - ./app/.env
+    depends_on:
+      - postgres
+      - redis
+      - app
+
+  flower:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: flower
+    networks:
+      - inside-network
+    command: >
+      bash -c "dockerize -wait tcp://postgres:5432
+      && celery -A demo --broker=redis://redis:6379 flower"
+    ports:
+      - 5555:5555
+    env_file:
+      - ./app/.env
+    depends_on:
+      - postgres
+      - app
+      - redis
+      - worker
+ 
+volumes:
+  pg:
+
+networks:
+    inside-network:
+        driver: bridge
+
+        
