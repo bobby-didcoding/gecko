@@ -6,9 +6,15 @@ logger = get_task_logger(__name__)
 
 
 @shared_task(bind=True)
-def get_token_data(self):
+def fetch_network_data(self):
+    call_command('fetch_network_data')
 
-    call_command('fetch_trending_pools')
 
-    print("test")
-    pass
+@shared_task(bind=True)
+def fetch_trending_pools_data(self):
+    call_command('fetch_trending_pools_data')
+
+
+@shared_task(bind=True)
+def fetch_dexes_data(self):
+    call_command('fetch_dexes_data')

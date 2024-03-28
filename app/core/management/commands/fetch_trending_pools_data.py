@@ -16,4 +16,4 @@ class Command(BaseCommand):
         if pools:
             Pool.objects.all().delete()
             Pool.objects.bulk_create(pools)
-        return f"Pools updated"
+        return "Pools updated"

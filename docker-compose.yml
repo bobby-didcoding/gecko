@@ -38,9 +38,9 @@ services:
       && python manage.py makemigrations
       && python manage.py migrate
       && python manage.py collectstatic --no-input
-      && python manage.py runserver 0.0.0.0:8000
+      && python manage.py fetch_network_data
       && python manage.py test
-      && python manage.py runscript config"
+      && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./app:/app
     ports:
@@ -60,9 +60,7 @@ services:
     networks:
       - inside-network
     command: >
-      bash -c "dockerize -wait tcp://postgres:5432
-      && python manage.py makemigrations
-      && python manage.py migrate
+      bash -c "dockerize -wait http://app:8000/admin/  -timeout 120s
       && celery -A demo worker --loglevel=info --logfile=logs/celery.log"
     volumes:
       - ./app:/code
@@ -77,13 +75,12 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
+    restart: unless-stopped
     container_name: beat
     networks:
       - inside-network
     command: >
-      bash -c "dockerize -wait tcp://postgres:5432
-      && python manage.py makemigrations
-      && python manage.py migrate
+      bash -c "dockerize -wait http://app:8000/admin/ -timeout 120s
       && celery -A demo beat -l info"
     volumes:
       - ./app:/code
@@ -92,6 +89,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - worker
       - app
 
   flower:
@@ -99,10 +97,11 @@ services:
       context: ./app
       dockerfile: Dockerfile
     container_name: flower
+    restart: unless-stopped
     networks:
       - inside-network
     command: >
-      bash -c "dockerize -wait tcp://postgres:5432
+      bash -c "dockerize -wait http://app:8000/admin/ -timeout 120s
       && celery -A demo --broker=redis://redis:6379 flower"
     ports:
       - 5555:5555

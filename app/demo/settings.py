@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "core",
-    "tasks"
+    "tasks",
+    "graphene_django",
 ]
 
 MIDDLEWARE = [

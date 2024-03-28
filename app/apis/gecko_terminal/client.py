@@ -29,6 +29,41 @@ class Client:
             return f'{self.base_url}/networks/{self.network}/trending_pools'
         return f'{self.base_url}/networks/trending_pools'
     
+    def get_networks(self) -> list:
+        next = self.networks()
+        data = []
+        while True:
+            response = requests.get(next)
+            match response.status_code:
+                case 200:
+                    rsp = response.json()
+                    next_url = rsp["links"]["next"]
+                    for p in rsp["data"]:
+                        p["external_id"] = p.pop("id")
+                        data.append(p)
+                    if next_url:
+                        next = next_url
+                    else:
+                        break
+        return data
+    
+    def get_dexes(self) -> list:
+        next = self.dexes()
+        data = []
+        while True:
+            response = requests.get(next)
+            match response.status_code:
+                case 200:
+                    rsp = response.json()
+                    next_url = rsp["links"]["next"]
+                    for p in rsp["data"]:
+                        p["external_id"] = p.pop("id")
+                        data.append(p)
+                    if next_url:
+                        next = next_url
+                    else:
+                        break
+        return data
 
     def get_trending_pools(self) -> list:
         url = self.trending_pools()
