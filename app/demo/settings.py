@@ -101,6 +101,8 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 GECKO_URL = "https://api.geckoterminal.com/api/v2"
 
+SUPERUSER_USERNAME = env("SUPERUSER_USERNAME", default="dev")
+SUPERUSER_PASSWORD = env("SUPERUSER_PASSWORD", default="dev")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
