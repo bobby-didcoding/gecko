@@ -13,10 +13,6 @@ app.conf.beat_schedule = {
         "task": "tasks.tasks.fetch_network_data",
         "schedule": timedelta(minutes=2),
     },
-    "fetch_dexes_data": {
-        "task": "tasks.tasks.fetch_dexes_data",
-        "schedule": timedelta(minutes=2),
-    },
     "fetch_trending_pools_data": {
         "task": "tasks.tasks.fetch_trending_pools_data",
         "schedule": timedelta(minutes=2),

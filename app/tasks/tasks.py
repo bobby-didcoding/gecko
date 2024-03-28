@@ -13,8 +13,3 @@ def fetch_network_data(self):
 @shared_task(bind=True)
 def fetch_trending_pools_data(self):
     call_command('fetch_trending_pools_data')
-
-
-@shared_task(bind=True)
-def fetch_dexes_data(self):
-    call_command('fetch_dexes_data')
