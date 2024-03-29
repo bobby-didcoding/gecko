@@ -43,6 +43,15 @@ make build
 ***
 *** 
 
+### Scheduled tasks
+The app has 2 scheduled tasks tat run every 30 seconds:
+
+1 - fetch_traending_pool_data
+2 - fetch_token_data
+
+***
+*** 
+
 
 ### Example GraphQL queries
 Open a browser on [http://localhost:8000/graphql/](http://localhost:8000/graphql/) and use the following query to view all token pairs in the database
