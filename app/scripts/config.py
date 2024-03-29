@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 
 User = get_user_model()
 
+
 class DBConfig:
     def manage_super_user(self) -> User:
         user = User.objects.filter(username=settings.SUPERUSER_USERNAME)
@@ -18,6 +19,7 @@ class DBConfig:
                 is_superuser=True,
             )
         return user
+
 
 def run():
     db_config = DBConfig()

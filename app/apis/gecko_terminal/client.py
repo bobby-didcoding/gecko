@@ -4,10 +4,11 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+
 class Client:
-    '''
+    """
     This handles all API calls to Gecko Terminal endpoints
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
         self.base_url = settings.GECKO_URL
@@ -16,22 +17,22 @@ class Client:
         self.address = kwargs.get("address")
 
     def networks(self) -> str:
-        return f'{self.base_url}/networks'
-    
+        return f"{self.base_url}/networks"
+
     def dexes(self) -> str:
-        return f'{self.base_url}/networks/{self.network}/dexes'
-    
+        return f"{self.base_url}/networks/{self.network}/dexes"
+
     def pools(self) -> str:
-        return f'{self.base_url}/networks/{self.network}/pools'
-    
+        return f"{self.base_url}/networks/{self.network}/pools"
+
     def token_info(self) -> str:
-        return f'{self.base_url}/networks/{self.network}/tokens/{self.address}/info'
-    
+        return f"{self.base_url}/networks/{self.network}/tokens/{self.address}/info"
+
     def trending_pools(self) -> str:
         if self.network:
-            return f'{self.base_url}/networks/{self.network}/trending_pools'
-        return f'{self.base_url}/networks/trending_pools'
-    
+            return f"{self.base_url}/networks/{self.network}/trending_pools"
+        return f"{self.base_url}/networks/trending_pools"
+
     def get_networks(self) -> list:
         next = self.networks()
         data = []
@@ -52,7 +53,7 @@ class Client:
                     else:
                         break
         return data
-    
+
     def get_dexes(self) -> list:
         next = self.dexes()
         data = []
@@ -94,7 +95,7 @@ class Client:
                     else:
                         break
         return data
-    
+
     def get_token_info(self) -> list:
         url = self.token_info()
         response = requests.get(url)
@@ -105,8 +106,3 @@ class Client:
                 data["external_id"] = data.pop("id")
                 return data
         return []
-
-
-
-
-    

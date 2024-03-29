@@ -2,7 +2,12 @@
 # App imports
 # --------------------------------------------------------------
 
-from core.tests.models import PoolModelTestCase, NetworkModelTestCase, DexModelTestCase, TokenModelTestCase
+from core.tests.models import (
+    PoolModelTestCase,
+    NetworkModelTestCase,
+    DexModelTestCase,
+    TokenModelTestCase,
+)
 from core.tests.schemas import PoolTestCase, PairsTestCase
 
 
@@ -12,5 +17,5 @@ __all__ = [
     DexModelTestCase,
     TokenModelTestCase,
     PoolTestCase,
-    PairsTestCase
+    PairsTestCase,
 ]

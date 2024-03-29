@@ -1,6 +1,5 @@
-import json
 from graphene_django.utils.testing import GraphQLTestCase
-from core.models import Pool, Network
+
 
 class PoolTestCase(GraphQLTestCase):
 
@@ -8,7 +7,7 @@ class PoolTestCase(GraphQLTestCase):
 
     def test_pool_query(self):
         response = self.query(
-            '''
+            """
             query{
                 pools{
                     externalId
@@ -26,8 +25,8 @@ class PoolTestCase(GraphQLTestCase):
                     }
                 }
             }
-            ''',
-            operation_name=None
+            """,
+            operation_name=None,
         )
         self.assertResponseNoErrors(response)
 
@@ -38,7 +37,7 @@ class PairsTestCase(GraphQLTestCase):
 
     def test_pairs_query(self):
         response = self.query(
-            '''
+            """
             query{
                 pairs{
                     baseToken{
@@ -49,7 +48,7 @@ class PairsTestCase(GraphQLTestCase):
                     }
                 }
             }
-            ''',
-            operation_name=None
+            """,
+            operation_name=None,
         )
         self.assertResponseNoErrors(response)
