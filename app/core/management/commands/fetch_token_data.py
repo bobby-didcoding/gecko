@@ -12,13 +12,16 @@ class Command(BaseCommand):
     stealth_options = ("stdin",)
 
     def handle(self, *args, **options):
+        '''
+        This needs more work!
+        Need to use the multiple endpoint to avoid rate limits
+        '''
         for token in Token.objects.all():
             data = Client(
                 network=token.network.external_id,
-                address=token.external_id
+                address=token.external_id.split("_")[1]
             ).get_token_info()
             if data:
-                for token in data:
-                    obj = Token.objects.filter(external_id=token.external_id)
-                    obj.update(**token)
-            return "Tokens updated"
+                obj = Token.objects.filter(external_id=data["external_id"])
+                obj.update(**data)
+        return "Tokens updated"

@@ -30,6 +30,10 @@ class NetworkType(DjangoObjectType):
 
 class TokenType(DjangoObjectType):
 
+    name = graphene.String(source='name')
+    address = graphene.String(source='address')
+    symbol = graphene.String(source='symbol')
+
     class Meta:
         model = Token
         fields = "__all__"
@@ -45,7 +49,7 @@ class Query(graphene.ObjectType):
     pools = graphene.List(PoolType)
     dexes = graphene.List(DexType)
     networks = graphene.List(NetworkType)
-    token_pairs = graphene.List(TokenPairType)
+    pairs = graphene.List(TokenPairType)
     tokens = graphene.List(TokenType)
 
     def resolve_pools(self, info):
@@ -103,14 +107,14 @@ class Query(graphene.ObjectType):
         """
         return Token.objects.all()
     
-    def resolve_token_pairs(self, info):
+    def resolve_pairs(self, info):
         """
-        The resolve_token_pairs function is a resolver. 
-        It’s responsible for retrieving the token_pairs from the database and returning them to GraphQL.
+        The resolve_pairs function is a resolver. 
+        It’s responsible for retrieving the pairs from the database and returning them to GraphQL.
 
         :param self: Refer to the current instance of a class
         :param info: Pass along the context of the query
-        :return: All token_pairs objects from the database
+        :return: All pairs objects from the database
         """
         return TokenPair.objects.all()
 

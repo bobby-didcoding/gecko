@@ -45,6 +45,27 @@ class Token(BaseModel):
     network = models.ForeignKey(Network, related_name="token_network", on_delete=models.CASCADE)
     dex = models.ForeignKey(Dex, related_name="token_dex", on_delete=models.CASCADE)
 
+    @property
+    def name(self):
+        try:
+            return self.attributes["name"]
+        except (KeyError, TypeError):
+            return "TBC"
+    
+    @property
+    def address(self):
+        try:
+            return self.attributes["address"]
+        except (KeyError, TypeError):
+            return "TBC"
+    
+    @property
+    def symbol(self):
+        try:
+            return self.attributes["symbol"]
+        except (KeyError, TypeError):
+            return "TBC"
+
 
 class TokenPair(BaseModel):
 

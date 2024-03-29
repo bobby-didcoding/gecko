@@ -40,7 +40,10 @@ class Client:
             match response.status_code:
                 case 200:
                     rsp = response.json()
-                    next_url = rsp["links"]["next"]
+                    try:
+                        next_url = rsp["links"]["next"]
+                    except KeyError:
+                        next_url = None
                     for p in rsp["data"]:
                         p["external_id"] = p.pop("id")
                         data.append(p)
@@ -58,7 +61,10 @@ class Client:
             match response.status_code:
                 case 200:
                     rsp = response.json()
-                    next_url = rsp["links"]["next"]
+                    try:
+                        next_url = rsp["links"]["next"]
+                    except KeyError:
+                        next_url = None
                     for p in rsp["data"]:
                         p["external_id"] = p.pop("id")
                         data.append(p)
@@ -69,28 +75,34 @@ class Client:
         return data
 
     def get_trending_pools(self) -> list:
-        url = self.trending_pools()
-        response = requests.get(url)
-        match response.status_code:
-            case 200:
-                rsp = response.json()
-                data = rsp["data"]
-                for p in data:
-                    p["external_id"] = p.pop("id")
-                return data
-        return []
+        next = self.trending_pools()
+        data = []
+        while True:
+            response = requests.get(next)
+            match response.status_code:
+                case 200:
+                    rsp = response.json()
+                    try:
+                        next_url = rsp["links"]["next"]
+                    except KeyError:
+                        next_url = None
+                    for p in rsp["data"]:
+                        p["external_id"] = p.pop("id")
+                        data.append(p)
+                    if next_url:
+                        next = next_url
+                    else:
+                        break
+        return data
     
     def get_token_info(self) -> list:
         url = self.token_info()
         response = requests.get(url)
-        print(response)
         match response.status_code:
             case 200:
-                print(rsp)
                 rsp = response.json()
                 data = rsp["data"]
-                for p in data:
-                    p["external_id"] = p.pop("id")
+                data["external_id"] = data.pop("id")
                 return data
         return []
 
