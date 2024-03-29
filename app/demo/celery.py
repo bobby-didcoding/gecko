@@ -9,13 +9,13 @@ app = Celery("demo")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.conf.beat_schedule = {
-    "fetch_network_data": {
-        "task": "tasks.tasks.fetch_network_data",
-        "schedule": timedelta(minutes=2),
-    },
     "fetch_trending_pools_data": {
         "task": "tasks.tasks.fetch_trending_pools_data",
-        "schedule": timedelta(minutes=2),
+        "schedule": timedelta(seconds=30),
+    },
+    "fetch_token_data": {
+        "task": "tasks.tasks.fetch_token_data",
+        "schedule": timedelta(seconds=30),
     },
 }
 

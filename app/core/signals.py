@@ -44,15 +44,3 @@ def create_pool(sender, instance, created, **kwargs):
         instance.dex = dex
         instance.token_pair = token_pair
         instance.save()
-
-        
-@receiver(post_save, sender=Token, weak=False)
-def create_token(sender, instance, created, **kwargs):
-    if created:
-        '''
-        Fetch token attributes
-        '''
-        fetch_token_data.delay(
-            network = instance.network.external_id,
-            address = instance.external_id
-        )

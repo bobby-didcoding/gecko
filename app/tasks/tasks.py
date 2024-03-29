@@ -20,16 +20,4 @@ def fetch_trending_pools_data(self):
 
 @shared_task(bind=True)
 def fetch_token_data(self, **kwargs):
-
-    network = kwargs.get("network")
-    address = kwargs.get("address")
-
-    data = Client(
-        network=network,
-        address=address
-    ).get_token_info()
-    if data:
-        for token in data:
-            obj = Token.objects.filter(external_id=address)
-            obj.update(**token)
-    return "Token updated"
+    call_command('fetch_token_data')

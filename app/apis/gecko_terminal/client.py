@@ -83,6 +83,7 @@ class Client:
     def get_token_info(self) -> list:
         url = self.token_info()
         response = requests.get(url)
+        print(response)
         match response.status_code:
             case 200:
                 print(rsp)
