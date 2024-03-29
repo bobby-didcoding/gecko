@@ -1,4 +1,3 @@
-import os
 from django.db import models
 import uuid
 from django_extensions.db.models import (
@@ -8,7 +7,11 @@ from django_extensions.db.models import (
 from .managers import CustomPoolManager
 
 
-class BaseModel(models.Model):
+class BaseModel(
+    TimeStampedModel,
+    ActivatorModel,
+    models.Model
+):
     class Meta:
         abstract = True
     
@@ -19,60 +22,70 @@ class BaseModel(models.Model):
     relationships = models.JSONField(blank=True, null=True)
     
 
-class Network(
-    TimeStampedModel,
-    ActivatorModel,
-    BaseModel
-):
+class Network(BaseModel):
 
     class Meta:
-        verbose_name = "Network"
-        verbose_name_plural = "Networks"
-        ordering = ['id']
+        ordering = ['external_id']
     
 
-class Dex(
-    TimeStampedModel,
-    ActivatorModel,
-    BaseModel
-):
+class Dex(BaseModel):
 
     class Meta:
-        verbose_name = "Dex"
         verbose_name_plural = "Dexes"
-        ordering = ['id']
+        ordering = ['external_id']
+
+    network = models.ForeignKey(Network, related_name="dex_network", on_delete=models.CASCADE)
 
 
-class Token(
-    TimeStampedModel,
-    ActivatorModel,
-    BaseModel
-):
+class Token(BaseModel):
 
     class Meta:
-        verbose_name = "Token"
-        verbose_name_plural = "Tokens"
-        ordering = ['id']
+        ordering = ['external_id']
+    
+    network = models.ForeignKey(Network, related_name="token_network", on_delete=models.CASCADE)
+    dex = models.ForeignKey(Dex, related_name="token_dex", on_delete=models.CASCADE)
 
 
-class Pool(
-    TimeStampedModel,
-    ActivatorModel,
-    BaseModel
-):
+class TokenPair(BaseModel):
 
     class Meta:
-        verbose_name = "Pool"
-        verbose_name_plural = "Pools"
-        ordering = ['id']
+        ordering = ['external_id']
+
+    base_token = models.ForeignKey(Token, related_name="token_pair_base_token", blank=True, null=True, on_delete=models.SET_NULL)
+    quote_token = models.ForeignKey(Token, related_name="token_pair_quote_token", blank=True, null=True, on_delete=models.SET_NULL)
+
+
+class Pool(BaseModel):
+
+    class Meta:
+        ordering = ['external_id']
 
     objects = CustomPoolManager()
 
-    base_token = models.ForeignKey(Token, related_name="pool_base_token", blank=True, null=True, on_delete=models.SET_NULL)
-    quote_token = models.ForeignKey(Token, related_name="pool_quote_token", blank=True, null=True, on_delete=models.SET_NULL)
+    token_pair = models.ForeignKey(TokenPair, related_name="pool_base_token_pair", blank=True, null=True, on_delete=models.SET_NULL)
     network = models.ForeignKey(Network, related_name="pool_network", blank=True, null=True, on_delete=models.SET_NULL)
     dex = models.ForeignKey(Dex, related_name="pool_dex", blank=True, null=True, on_delete=models.SET_NULL)
 
     @property
-    def todo(self):
-        return f'{self.external_id} - playing'
+    def name(self):
+        return self.attributes["name"]
+    
+    @property
+    def address(self):
+        return self.attributes["address"]
+    
+    @property
+    def base_token_price_usd(self):
+        return self.attributes["base_token_price_usd"]
+    
+    @property
+    def quote_token_price_usd(self):
+        return self.attributes["quote_token_price_usd"]
+    
+    @property
+    def base_token_price_quote_token(self):
+        return self.attributes["base_token_price_quote_token"]
+    
+    @property
+    def quote_token_price_base_token(self):
+        return self.attributes["quote_token_price_base_token"]

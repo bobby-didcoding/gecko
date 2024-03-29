@@ -24,6 +24,9 @@ class Client:
     def pools(self) -> str:
         return f'{self.base_url}/networks/{self.network}/pools'
     
+    def token_info(self) -> str:
+        return f'{self.base_url}/networks/{self.network}/tokens/{self.address}/info'
+    
     def trending_pools(self) -> str:
         if self.network:
             return f'{self.base_url}/networks/{self.network}/trending_pools'
@@ -70,6 +73,19 @@ class Client:
         response = requests.get(url)
         match response.status_code:
             case 200:
+                rsp = response.json()
+                data = rsp["data"]
+                for p in data:
+                    p["external_id"] = p.pop("id")
+                return data
+        return []
+    
+    def get_token_info(self) -> list:
+        url = self.token_info()
+        response = requests.get(url)
+        match response.status_code:
+            case 200:
+                print(rsp)
                 rsp = response.json()
                 data = rsp["data"]
                 for p in data:

@@ -12,8 +12,8 @@ class Command(BaseCommand):
     stealth_options = ("stdin",)
 
     def handle(self, *args, **options):
-        pools = [Pool(**p) for p in Client().get_trending_pools()]
-        if pools:
-            Pool.objects.all().delete()
-            Pool.objects.bulk_create(pools)
+        data = Client().get_trending_pools()
+        if data:
+            for pool in data:
+                obj, created = Pool.objects.get_or_create(**pool)
         return "Pools updated"

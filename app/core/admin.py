@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Pool, Network , Token, Dex
+from .models import Pool, Network , Token, Dex, TokenPair
  
 @admin.register(Pool)
 class PoolAdmin(admin.ModelAdmin):
@@ -13,6 +13,11 @@ class NetworkAdmin(admin.ModelAdmin):
 
 @admin.register(Token)
 class TokenAdmin(admin.ModelAdmin):
+    list_display = ('id','external_id',)
+    search_fields = ('external_id',)
+
+@admin.register(TokenPair)
+class TokenPairAdmin(admin.ModelAdmin):
     list_display = ('id','external_id',)
     search_fields = ('external_id',)
 
