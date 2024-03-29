@@ -48,27 +48,34 @@ make build
 Open a browser on [http://localhost:8000/graphql/](http://localhost:8000/graphql/) and use the following query to view all token pairs in the database
 ```
 query{
-    tokenPairs{
-        basetoken{
-            external_id
-        }
-        quoteToken{
-            external_id
-        }
+  pools{
+    externalId
+    name
+    address
+    baseTokenPriceUsd
+    quoteTokenPriceUsd
+    baseTokenPriceQuoteToken
+    quoteTokenPriceBaseToken
+    dex{
+      externalId
     }
+    network{
+      externalId
+    }
+  }
 }
 ```
 The following will display the pools and their relations.
 ```
 query{
-    tokenPairs{
-        basetoken{
-            external_id
-        }
-        quoteToken{
-            external_id
-        }
+  pairs{
+    baseToken{
+      externalId
     }
+    quoteToken{
+      externalId
+    }
+  }
 }
 ```
 

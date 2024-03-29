@@ -27,6 +27,10 @@ class Network(BaseModel):
     class Meta:
         ordering = ['external_id']
     
+    def __str__(self):
+        return self.external_id
+
+    
 
 class Dex(BaseModel):
 
@@ -36,6 +40,9 @@ class Dex(BaseModel):
 
     network = models.ForeignKey(Network, related_name="dex_network", on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.external_id
+
 
 class Token(BaseModel):
 
@@ -44,6 +51,9 @@ class Token(BaseModel):
     
     network = models.ForeignKey(Network, related_name="token_network", on_delete=models.CASCADE)
     dex = models.ForeignKey(Dex, related_name="token_dex", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.external_id
 
     @property
     def name(self):
@@ -86,6 +96,9 @@ class Pool(BaseModel):
     token_pair = models.ForeignKey(TokenPair, related_name="pool_base_token_pair", blank=True, null=True, on_delete=models.SET_NULL)
     network = models.ForeignKey(Network, related_name="pool_network", blank=True, null=True, on_delete=models.SET_NULL)
     dex = models.ForeignKey(Dex, related_name="pool_dex", blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.external_id
 
     @property
     def name(self):
